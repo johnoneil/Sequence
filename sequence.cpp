@@ -3,6 +3,7 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/make_shared.hpp>
 #include <iostream>
+#include <list>
 using boost::shared_ptr;
 using boost::make_shared;
 using std::cout;
@@ -32,6 +33,8 @@ public:
 	};
 	SequencePtr Then( SequencePtr sp)
 	{
+		//TODO: prevent circular/doubled referenes.
+		//these may cause infinite loops.
 		cout<<"Sequence::Then"<<endl;
 		if(sp && !m_series)
 		{
@@ -45,6 +48,8 @@ public:
 	};
 	SequencePtr While( SequencePtr sp)
 	{
+		//TODO: prevent circular/doubled references.
+		//these may cause infinite loops
 		cout<<"Sequence::While"<<endl;
 		if(sp && !m_parallel)
 		{
@@ -139,8 +144,7 @@ private:
 		}
 		
 		
-	}
-	//friend boost::shared_ptr< Sequence< Pause > > boost::make_shared<>(const float);
+	};
 public:
 	Pause(const float time)
 	:m_counter(0)
@@ -149,12 +153,116 @@ public:
 	};
 };
 
+class SequenceHead
+{
+public:
+	bool Update(const float dt)
+	{
+		m_sequence = m_sequence->Service(1.0f);
+		return m_sequence;
+	}
+	SequenceHead& Then(SequencePtr sequence)
+	{
+		if(m_sequence)
+		{
+			m_sequence->Then(sequence);
+		}else{
+			m_sequence = sequence;
+		}
+		return *this;
+	};
+	SequenceHead& Then(const SequenceHead& sequence)
+	{
+		if(&sequence!=this)
+		{
+			Then(sequence.m_sequence);
+		}
+		return *this;
+	}
+	SequenceHead& First(SequencePtr sp)
+	{
+		return Then(sp);
+	};
+	SequenceHead& While(SequencePtr sp)
+	{
+		if(m_sequence)
+		{
+			m_sequence->While(sp);
+		}else{
+			m_sequence = sp;
+		}
+		return *this;	
+	};
+	SequenceHead operator=(const SequencePtr& seq)
+	{
+		//No matter its current state, this assigns the given
+		//sequence as the primary sequence this is the head of
+		m_sequence = seq;
+	};
+	SequenceHead operator=(const SequenceHead& other)
+	{
+		if(&other!=this)
+		{
+			m_sequence = other.m_sequence;
+		}
+		return *this;
+		
+	};
+	SequenceHead(const SequencePtr& seq)
+		:m_sequence(seq)
+	{
+
+	};
+	SequenceHead(const SequenceHead& other)
+		:m_sequence(other.m_sequence)	
+	{
+
+	};
+	
+private:
+	SequencePtr m_sequence;
+};
+
+
+
+SequenceHead Wait(const float timeToWait)
+{
+	return SequenceHead(make_shared< Pause >(timeToWait));
+};
+
 int main(int argc, char* argv[])
 {
-	SequencePtr sequence = Pause::Seconds(10.0f)
-		->Then( Pause::Seconds(10.0f)->While(Pause::Seconds(10.0f)) )
-		->Then( Pause::Seconds(10.0f) );
-	while( sequence = sequence->Service(1.0f) )
+	/*
+	SequenceHead seq;
+	seq.First(Wait(10.0f))
+		.Then(Wait(10.0f))
+		.Then(Wait(10.0f))
+		.While(Wait(10.0f));//WhileSimultaneously, AndSimultaneously, (parallel task, no rendezvous)
+	*/
+	SequenceHead seq = Wait(10.0f).Then(Wait(10.0f)).Then(Wait(10.0f));
+	SequenceHead s2 = Wait(10.0f).Then(Wait(10.0f));
+	seq.Then(s2);
+
+	seq = s2;
+
+	//seq = First(Wait(10.0f).Then(Wait(10.0f).Then(Wait(10.0f)); --> First as constructor, define head assignment operator
+
+	//seq.First(Wait(10.0f)).Then(Both(Wait(10.0f).And(Wait(10.0f))---> "Both" container, linked by "And"
+	//								     Task completes when all parallel tasks complete
+	//seq.First(wait(10.0f)).Then.Both(Wait(10.0f)).And(Wait(10.0f))
+
+	//seq.First(Wait(10.0f)).Then.Either(Wait(10.0f)).Or(Wait(10.0f)) -->Either container, linked by "Or"
+
+	//Button press with blink and timeout
+	//Sequence getButtonPress = First.Either(GetButtonPress(BUTTON_ID)).Or(Blink(LIGHT_ID,1.0f)).Or(Timeout(30.0f));
+	//Sequence buttonPressScreen = First(MUI_Show(BUTTON_SCREEN_INTRO).Then(getButtonPress).Then(MUI_Show(BUTTON_SCREEN_OUTRO));
+	
+	//SequencePtr sequence = Pause::Seconds(10.0f)
+	//	->Then( Pause::Seconds(10.0f)->While(Pause::Seconds(10.0f)) )
+	//	->Then( Pause::Seconds(10.0f) );
+	//while( sequence = sequence->Service(1.0f) 
+
+	while(seq.Update(1.0f))
 	{
 		
 	}
