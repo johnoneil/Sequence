@@ -1,8 +1,9 @@
 EXE=sequence
 COMPILER=g++
-SOURCE=sequence.cpp
+SOURCE := $(wildcard *.cpp)
+HEADERS := $(wildcard *.hpp)
 
-$(EXE): $(SOURCE)
+$(EXE): $(SOURCE) $(HEADERS)
 	$(COMPILER) $(SOURCE) -o $(EXE)	
 
 all: clean $(EXE)
