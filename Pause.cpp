@@ -26,6 +26,14 @@ Sequence Pause(const float time)
 {
   return Sequence(make_shared< PauseTask >(time));
 }
+Sequence Timeout(const float time)
+{
+  return Pause(time);
+}
+Sequence Wait(const float time)
+{
+  return Pause(time);
+}
 
 PauseTask::PauseTask(const float timeSeconds)
   :m_timeToRun(timeSeconds)

@@ -14,13 +14,13 @@ DATE: Saturday, Oct 5th 2013
 #define __SEQUENCE_HPP__
 #include "Serviceable.hpp"
 
-//class BothTask;
-
 class Sequence
 {
 public:
   friend class BothTask;
+  friend class EitherTask;
   friend class RendezvousSequence;
+  friend class OrSequence;
 
   Sequence(const ServiceablePtr& seq);
 	Sequence(const Sequence& other);
@@ -48,6 +48,16 @@ public:
 
   RendezvousSequence& And(const ServiceablePtr& seq);
   RendezvousSequence& And(const Sequence& seq);
+};
+
+class OrSequence: public Sequence
+{
+public:
+  OrSequence(const Sequence& seq);
+  OrSequence(const ServiceablePtr& seq);
+
+  OrSequence& Or(const ServiceablePtr& seq);
+  OrSequence& Or(const Sequence& seq);
 };
 
 #endif

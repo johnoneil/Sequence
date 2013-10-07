@@ -16,6 +16,8 @@ DATE: Saturday, Oct 5th 2013
 #include "Sequence.hpp"
 
 Sequence Pause(const float time);
+Sequence Timeout(const float time);
+Sequence Wait(const float time);
 
 class PauseTask: public Serviceable
 {

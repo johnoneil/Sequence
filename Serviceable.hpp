@@ -40,6 +40,8 @@ public:
   //while( seq = seq.Service(dt))
 	ServiceablePtr Service(const float dt);
 
+  void Cancel(void);
+
 protected:
   inline void Done(void){m_complete=true;};
 

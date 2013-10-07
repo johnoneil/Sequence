@@ -13,6 +13,7 @@ DATE: Saturday, Oct 5th 2013
  
 #include "Sequence.hpp"
 #include "Both.hpp"
+#include "Either.hpp"
 #include <iostream>
 using std::cout;
 using std::endl;
@@ -124,6 +125,33 @@ RendezvousSequence& RendezvousSequence::And(const Sequence& seq)
     bothseq->And(seq.m_sequence);
   }
   return *this;
+}
 
+OrSequence::OrSequence(const Sequence& seq)
+  :Sequence(seq)
+{
+  cout<<"OrSequence const from seq"<<endl;
+}
+OrSequence::OrSequence(const ServiceablePtr& seq)
+  :Sequence(seq)
+{
+  cout<<"OrSequence const from ServiceablePtr"<<endl;
+}
+
+OrSequence& OrSequence::Or(const ServiceablePtr& seq)
+{
+  cout<<"OrSequence const from seq ServiceablePtr&"<<endl;
+  return *this;
+}
+OrSequence& OrSequence::Or(const Sequence& seq)
+{
+  cout<<"OrSequence::Or Sequence&"<<endl;
+  //attempt to upcast current ServiceablePtr to a BothTask
+  shared_ptr< EitherTask > eitherseq = boost::dynamic_pointer_cast< EitherTask >(m_sequence);
+  if(eitherseq)
+  {
+    eitherseq->Or(seq.m_sequence);
+  }
+  return *this;
 }
 

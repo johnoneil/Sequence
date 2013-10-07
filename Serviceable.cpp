@@ -35,6 +35,13 @@ Serviceable::~Serviceable()
 
 }
 
+void Serviceable::Cancel(void)
+{
+  cout<<"Serviceable::Cancel"<<endl;
+  Done();
+  AfterCompletion();
+}
+
 ServiceablePtr Serviceable::Then(const ServiceablePtr& sp)
 {
 	//TODO: prevent circular/doubled referenes.
@@ -78,10 +85,19 @@ ServiceablePtr Serviceable::Service(const float dt)
 
 	UpdateParallelTasks(dt);
 
-  DoService(dt);
+  //If the task is in some way already complete
+  //we don't service this class at all
+  if(!m_complete)
+  {
+    DoService(dt);
+  }
 
-	if( m_complete == true)
+  //TODO: protect against running completion handler multiple times
+  //if this class gets serviced multiple times after completion?
+  //it shouldn't happen, but we ought to guarrantee it only runs once.
+	if(m_complete)
 	{
+    //TODO: fire a global event to notify listeners this task has completed?
 		AfterCompletion();
 		//this task is complete. Pass parallel tasks to first child in series
 		if(m_parallel)
