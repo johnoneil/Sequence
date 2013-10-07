@@ -26,6 +26,7 @@ class Serviceable : public boost::enable_shared_from_this< Serviceable >
 {
 public:
 	Serviceable();
+  //Serviceable(const Serviceable&);
 	virtual ~Serviceable();
 
   //Add a serviceable task in series (run when this completes)
@@ -57,6 +58,9 @@ private:
   bool m_complete;
 	ServiceablePtr m_series;
 	ServiceablePtr m_parallel;
+private:
+  
+  Serviceable operator=(const Serviceable&);
 };
 
 #endif

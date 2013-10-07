@@ -14,23 +14,40 @@ DATE: Saturday, Oct 5th 2013
 #define __SEQUENCE_HPP__
 #include "Serviceable.hpp"
 
+//class BothTask;
+
 class Sequence
 {
 public:
+  friend class BothTask;
+  friend class RendezvousSequence;
+
   Sequence(const ServiceablePtr& seq);
 	Sequence(const Sequence& other);
 
 	Sequence& Then(const ServiceablePtr& sequence);
 	Sequence& Then(const Sequence& sequence);
-	Sequence& First(const Sequence& sp);
 	Sequence& While(const ServiceablePtr& sp);
+  Sequence& While(const Sequence& sequence);
+
 	Sequence operator=(const ServiceablePtr& seq);
 	Sequence operator=(const Sequence& other);
+  //Sequence operator=(const BothTask& both); 
 
 	bool Update(const float dt);
 
-private:
+protected:
 	ServiceablePtr m_sequence;
+};
+
+class RendezvousSequence: public Sequence
+{
+public:
+  RendezvousSequence(const Sequence& seq);
+  RendezvousSequence(const ServiceablePtr& seq);
+
+  RendezvousSequence& And(const ServiceablePtr& seq);
+  RendezvousSequence& And(const Sequence& seq);
 };
 
 #endif

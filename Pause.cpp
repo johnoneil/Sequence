@@ -16,8 +16,11 @@ DATE: Saturday, Oct 5th 2013
 
 #include <boost/make_shared.hpp>
 #include <iostream>
+
 using boost::shared_ptr;
 using boost::make_shared;
+using std::cout;
+using std::endl;
 
 Sequence Pause(const float time)
 {
@@ -34,6 +37,7 @@ PauseTask::PauseTask(const float timeSeconds)
 void PauseTask::DoService(const float dt)
 {
   m_timeRun+=dt;
+  cout<<"PauseTask::DoService "<<m_timeRun<<" of "<<m_timeToRun<<endl;
   if(m_timeRun>=m_timeToRun)
   {
     Done();

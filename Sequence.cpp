@@ -12,6 +12,10 @@ DATE: Saturday, Oct 5th 2013
 */
  
 #include "Sequence.hpp"
+#include "Both.hpp"
+#include <iostream>
+using std::cout;
+using std::endl;
 
 Sequence::Sequence(const ServiceablePtr& seq)
 	:m_sequence(seq)
@@ -45,10 +49,6 @@ Sequence& Sequence::Then(const Sequence& sequence)
 	return *this;
 }
 
-Sequence& Sequence::First(const Sequence& sp)
-{
-	return Then(sp);
-}
 
 Sequence& Sequence::While(const ServiceablePtr& sp)
 {
@@ -59,6 +59,15 @@ Sequence& Sequence::While(const ServiceablePtr& sp)
 		m_sequence = sp;
 	}
 	return *this;	
+}
+
+Sequence& Sequence::While(const Sequence& sequence)
+{
+	if(&sequence!=this)
+	{
+		While(sequence.m_sequence);
+	}
+	return *this;
 }
 
 Sequence Sequence::operator=(const ServiceablePtr& seq)
@@ -75,12 +84,46 @@ Sequence Sequence::operator=(const Sequence& other)
 		m_sequence = other.m_sequence;
 	}
 	return *this;
-	
 }
+
+//Sequence Sequence::operator=(const BothTask& both)
+//{
+//  m_sequence = both;
+//}
 
 bool Sequence::Update(const float dt)
 {
 	m_sequence = m_sequence->Service(dt);
 	return m_sequence;
+}
+
+RendezvousSequence::RendezvousSequence(const Sequence& seq)
+  :Sequence(seq)
+{
+  cout<<"RendezvousSequence const from seq"<<endl;
+}
+RendezvousSequence::RendezvousSequence(const ServiceablePtr& seq)
+  :Sequence(seq)
+{
+  cout<<"RendezvousSequence const from ServiceablePtr"<<endl;
+}
+
+RendezvousSequence& RendezvousSequence::And(const ServiceablePtr& seq)
+{
+  cout<<"RendezvousSequence const from seq ServiceablePtr&"<<endl;
+  return *this;
+}
+RendezvousSequence& RendezvousSequence::And(const Sequence& seq)
+{
+  cout<<"RendezvousSequence::And Sequence&"<<endl;
+  //attempt to upcast current ServiceablePtr to a BothTask
+  //shared_ptr< BothTask > bothseq = dynamic_cast< shared_ptr< BothTask > >(m_sequence);
+  shared_ptr< BothTask > bothseq = boost::dynamic_pointer_cast< BothTask >(m_sequence);
+  if(bothseq)
+  {
+    bothseq->And(seq.m_sequence);
+  }
+  return *this;
+
 }
 
