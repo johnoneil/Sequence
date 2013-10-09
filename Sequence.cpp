@@ -94,7 +94,16 @@ Sequence Sequence::operator=(const Sequence& other)
 
 bool Sequence::Update(const float dt)
 {
-	m_sequence = m_sequence->Service(dt);
+  while(m_sequence)
+  {
+    ServiceablePtr currentSeq = m_sequence->Service(dt);
+    if(currentSeq==m_sequence)
+    {
+      break;
+    }else{
+      m_sequence = currentSeq;
+    }
+  }
 	return m_sequence;
 }
 
