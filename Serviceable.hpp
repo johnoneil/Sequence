@@ -31,8 +31,6 @@ public:
 
   //Add a serviceable task in series (run when this completes)
 	ServiceablePtr Then(const ServiceablePtr& sp);
-  //Add a serviceable task in parallel (run as this runs. May complete before or after)
-	ServiceablePtr While(const ServiceablePtr& sp);
 
   //Basic service implementation. Returned pointer is the current "head" of
   //the chain of serviced tasks. Meant to be called in the form:
@@ -53,13 +51,9 @@ private:
 	virtual void BeforeFirstUpdate(void);
 	virtual void AfterCompletion(void);
 
-  //Helpers
-	void UpdateParallelTasks(const float dt);
-
   bool m_updated;
   bool m_complete;
 	ServiceablePtr m_series;
-	ServiceablePtr m_parallel;
 private:
   
   Serviceable operator=(const Serviceable&);

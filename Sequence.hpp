@@ -13,32 +13,47 @@ DATE: Saturday, Oct 5th 2013
 #ifndef __SEQUENCE_HPP__
 #define __SEQUENCE_HPP__
 #include "Serviceable.hpp"
+//#include "And.hpp"
+
+class AndSequence;
 
 class Sequence
 {
 public:
-  friend class BothTask;
-  friend class EitherTask;
-  friend class RendezvousSequence;
-  friend class OrSequence;
+  friend class AndSequence;
 
   Sequence(const ServiceablePtr& seq);
 	Sequence(const Sequence& other);
 
 	Sequence& Then(const ServiceablePtr& sequence);
 	Sequence& Then(const Sequence& sequence);
-	Sequence& While(const ServiceablePtr& sp);
-  Sequence& While(const Sequence& sequence);
+
+  virtual Sequence And(const ServiceablePtr& seq);
+  virtual Sequence And(const Sequence& seq);
 
 	Sequence operator=(const ServiceablePtr& seq);
 	Sequence operator=(const Sequence& other);
-  //Sequence operator=(const BothTask& both); 
 
 	bool Update(const float dt);
+  bool IsComplete(void)const;
 
 protected:
+  virtual bool DoUpdate(const float dt);
 	ServiceablePtr m_sequence;
 };
+
+/*
+class SequenceAndWrapper: public Serviceable, public Sequence
+{
+public:
+  SequenceAndWrapper(const Sequence& seq);
+  SequenceAndWrapper(const ServiceablePtr& seq);
+
+  SequenceAndWrapper& And(const Sequence& seq);
+  SequenceAndWrapper& And(const ServiceablePtr& seq);
+};
+
+SequenceAndWrapper And(const Sequence& seq);
 
 class RendezvousSequence: public Sequence
 {
@@ -59,6 +74,6 @@ public:
   OrSequence& Or(const ServiceablePtr& seq);
   OrSequence& Or(const Sequence& seq);
 };
-
+*/
 #endif
 

@@ -12,22 +12,24 @@ DATE: Saturday, Oct 5th 2013
 */
  
 #include "Sequence.hpp"
-#include "Both.hpp"
-#include "Either.hpp"
+//#include "Both.hpp"
+//#include "Either.hpp"
+#include "And.hpp"
 #include <iostream>
+#include <boost/make_shared.hpp>
 using std::cout;
 using std::endl;
 
 Sequence::Sequence(const ServiceablePtr& seq)
 	:m_sequence(seq)
 {
-
+  cout<<"Sequence::Sequence ptr"<<endl;
 }
 
 Sequence::Sequence(const Sequence& other)
 	:m_sequence(other.m_sequence)	
 {
-
+  cout<<"Sequence::Sequence seq"<<endl;
 }
 
 Sequence& Sequence::Then(const ServiceablePtr& sequence)
@@ -50,25 +52,20 @@ Sequence& Sequence::Then(const Sequence& sequence)
 	return *this;
 }
 
-
-Sequence& Sequence::While(const ServiceablePtr& sp)
+Sequence Sequence::And(const ServiceablePtr& seq)
 {
-	if(m_sequence)
-	{
-		m_sequence->While(sp);
-	}else{
-		m_sequence = sp;
-	}
-	return *this;	
+
+  ServiceablePtr s=m_sequence;
+  shared_ptr<AndSequence> sp=make_shared< AndSequence >(s);
+  sp->And(seq);
+  return Sequence(sp);
 }
-
-Sequence& Sequence::While(const Sequence& sequence)
+Sequence Sequence::And(const Sequence& seq)
 {
-	if(&sequence!=this)
-	{
-		While(sequence.m_sequence);
-	}
-	return *this;
+  ServiceablePtr s=m_sequence;
+  shared_ptr<AndSequence> sp=make_shared< AndSequence >(s);
+  sp->And(seq.m_sequence);
+  return Sequence(sp);
 }
 
 Sequence Sequence::operator=(const ServiceablePtr& seq)
@@ -87,13 +84,15 @@ Sequence Sequence::operator=(const Sequence& other)
 	return *this;
 }
 
-//Sequence Sequence::operator=(const BothTask& both)
-//{
-//  m_sequence = both;
-//}
 
 bool Sequence::Update(const float dt)
 {
+  return DoUpdate(dt);
+}
+
+bool Sequence::DoUpdate(const float dt)
+{
+  cout<<"Sequence::DoUpdate"<<endl;
   while(m_sequence)
   {
     ServiceablePtr currentSeq = m_sequence->Service(dt);
@@ -105,6 +104,51 @@ bool Sequence::Update(const float dt)
     }
   }
 	return m_sequence;
+}
+
+bool Sequence::IsComplete(void)const
+{
+  return m_sequence;
+}
+/*
+SequenceAndWrapper::SequenceAndWrapper(const Sequence& seq)
+  :Sequence(seq)
+{
+  cout<<"SequenceAndWrapper::SequenceAndWrapper seq"<<endl;
+}
+SequenceAndWrapper::SequenceAndWrapper(const ServiceablePtr& seq)
+  :Sequence(seq)
+{
+  cout<<"SequenceAndWrapper::SequenceAndWrapper ptr"<<endl;
+}
+
+SequenceAndWrapper& SequenceAndWrapper::And(const Sequence& seq)
+{
+  cout<<"SequenceAndWrapper::And seq"<<endl;
+  if(m_sequence)
+  {
+    m_sequence->While(seq.m_sequence);
+  }else{
+    m_sequence = seq.m_sequence;
+  }
+  return *this;
+}
+SequenceAndWrapper& SequenceAndWrapper::And(const ServiceablePtr& seq)
+{
+ cout<<"SequenceAndWrapper::And ptr"<<endl;
+  if(m_sequence)
+  {
+    m_sequence->While(seq);
+  }else{
+    m_sequence = seq;
+  }
+  return *this;
+}
+
+SequenceAndWrapper And(const Sequence& seq)
+{
+  cout<<__FUNCTION__<<endl;
+  return SequenceAndWrapper(make_shared< SequenceAndWrapper >(seq));
 }
 
 RendezvousSequence::RendezvousSequence(const Sequence& seq)
@@ -163,4 +207,4 @@ OrSequence& OrSequence::Or(const Sequence& seq)
   }
   return *this;
 }
-
+*/

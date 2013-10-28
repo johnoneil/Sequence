@@ -26,10 +26,7 @@ Serviceable::Serviceable()
 {
 
 }
-//Serviceable(const Serviceable&)
-//{
-//  
-//}
+
 Serviceable::~Serviceable()
 {
 
@@ -58,22 +55,6 @@ ServiceablePtr Serviceable::Then(const ServiceablePtr& sp)
 	return shared_from_this();
 }
 
-ServiceablePtr Serviceable::While(const ServiceablePtr& sp)
-{
-	//TODO: prevent circular/doubled references.
-	//these may cause infinite loops
-	cout<<"Serviceable::While"<<endl;
-	if(sp && !m_parallel)
-	{
-		cout<<"final"<<endl;
-		(m_parallel = sp);
-	}else if (sp && m_parallel){
-		cout<<"Nest"<<endl;
-		m_parallel->While(sp);
-	}
-	return shared_from_this();
-}
-
 ServiceablePtr Serviceable::Service(const float dt)
 {
 	cout<<"Serviceable::Service"<<endl;
@@ -82,8 +63,6 @@ ServiceablePtr Serviceable::Service(const float dt)
 		BeforeFirstUpdate();
 		m_updated = true;
 	}
-
-	UpdateParallelTasks(dt);
 
   //If the task is in some way already complete
   //we don't service this class at all
@@ -99,16 +78,6 @@ ServiceablePtr Serviceable::Service(const float dt)
 	{
     //TODO: fire a global event to notify listeners this task has completed?
 		AfterCompletion();
-		//this task is complete. Pass parallel tasks to first child in series
-		if(m_parallel)
-		{
-			if(m_series)
-			{
-				m_series->While(m_parallel);
-			}else{
-				return m_parallel;
-			}
-		}
 		return m_series;	
 	}else{
 		return shared_from_this();
@@ -128,12 +97,5 @@ void Serviceable::AfterCompletion(void)
 {
 	cout<<"Serviceable::AfterCompletion()"<<endl;
 }
-void Serviceable::UpdateParallelTasks(const float dt)
-{
-	cout<<"Serviceable::UpdateParallelTasks"<<endl;
-	if(m_parallel)
-	{
-		m_parallel = m_parallel->Service(dt);
-	}
-}
+
 
