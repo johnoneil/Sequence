@@ -40,6 +40,7 @@ void OrSequence::DoService(const float dt)
         if(!(*itask))
         {
           complete=true;
+          break;
         }
       }
     }
