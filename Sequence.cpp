@@ -15,6 +15,7 @@ DATE: Saturday, Oct 5th 2013
 //#include "Both.hpp"
 //#include "Either.hpp"
 #include "And.hpp"
+#include "Or.hpp"
 #include <iostream>
 #include <boost/make_shared.hpp>
 using std::cout;
@@ -56,15 +57,31 @@ Sequence Sequence::And(const ServiceablePtr& seq)
 {
 
   ServiceablePtr s=m_sequence;
-  shared_ptr<AndSequence> sp=make_shared< AndSequence >(s);
+  shared_ptr< AndSequence > sp=make_shared< AndSequence >(s);
   sp->And(seq);
   return Sequence(sp);
 }
 Sequence Sequence::And(const Sequence& seq)
 {
   ServiceablePtr s=m_sequence;
-  shared_ptr<AndSequence> sp=make_shared< AndSequence >(s);
+  shared_ptr< AndSequence > sp=make_shared< AndSequence >(s);
   sp->And(seq.m_sequence);
+  return Sequence(sp);
+}
+
+Sequence Sequence::Or(const ServiceablePtr& seq)
+{
+
+  ServiceablePtr s=m_sequence;
+  shared_ptr< OrSequence > sp=make_shared< OrSequence >(s);
+  sp->Or(seq);
+  return Sequence(sp);
+}
+Sequence Sequence::Or(const Sequence& seq)
+{
+  ServiceablePtr s=m_sequence;
+  shared_ptr< OrSequence > sp=make_shared< OrSequence >(s);
+  sp->Or(seq.m_sequence);
   return Sequence(sp);
 }
 

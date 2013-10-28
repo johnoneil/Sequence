@@ -21,6 +21,7 @@ class Sequence
 {
 public:
   friend class AndSequence;
+  friend class OrSequence;
 
   Sequence(const ServiceablePtr& seq);
 	Sequence(const Sequence& other);
@@ -30,6 +31,9 @@ public:
 
   virtual Sequence And(const ServiceablePtr& seq);
   virtual Sequence And(const Sequence& seq);
+
+  virtual Sequence Or(const ServiceablePtr& seq);
+  virtual Sequence Or(const Sequence& seq);
 
 	Sequence operator=(const ServiceablePtr& seq);
 	Sequence operator=(const Sequence& other);
