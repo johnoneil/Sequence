@@ -29,11 +29,11 @@ public:
   Sequence& Then(const ServiceablePtr& sequence);
   Sequence& Then(const Sequence& sequence);
 
-  virtual Sequence And(const ServiceablePtr& seq);
-  virtual Sequence And(const Sequence& seq);
+  Sequence And(const ServiceablePtr& seq);
+  Sequence And(const Sequence& seq);
 
-  virtual Sequence Or(const ServiceablePtr& seq);
-  virtual Sequence Or(const Sequence& seq);
+  Sequence Or(const ServiceablePtr& seq);
+  Sequence Or(const Sequence& seq);
 
   Sequence operator=(const ServiceablePtr& seq);
   Sequence operator=(const Sequence& other);
@@ -42,7 +42,7 @@ public:
   bool IsComplete(void)const;
 
 protected:
-  virtual bool DoUpdate(const float dt);
+  bool DoUpdate(const float dt);
   ServiceablePtr m_sequence;
 };
 
