@@ -16,6 +16,8 @@ DATE: Sunday, Oct 28th, 2015
 #include "Sequence.hpp"
 #include <list>
 
+namespace Chain
+{
 
 Sequence Either(const Sequence& seq);
 
@@ -26,7 +28,6 @@ public:
   OrSequence(const ServiceablePtr& seq);
 
   ServiceablePtr Or(const ServiceablePtr& seq);
-  //ServiceablePtr Or(const Sequence& seq);
 
 private:
 	void DoService(const float dt);
@@ -35,5 +36,7 @@ private:
   std::list< ServiceablePtr > m_tasks;
 
 };
+
+}
 
 #endif

@@ -16,6 +16,8 @@ DATE: Sunday, Oct 28th, 2015
 #include "Sequence.hpp"
 #include <list>
 
+namespace Chain
+{
 
 Sequence Both(const Sequence& seq);
 
@@ -35,5 +37,7 @@ private:
   std::list< ServiceablePtr > m_tasks;
 
 };
+
+}
 
 #endif

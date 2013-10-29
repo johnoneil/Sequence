@@ -19,6 +19,9 @@ DATE: Saturday, Oct 5th 2013
 using boost::shared_ptr;
 using boost::make_shared;
 
+namespace Chain
+{
+
 class Serviceable;
 typedef shared_ptr< Serviceable > ServiceablePtr;
 
@@ -26,7 +29,6 @@ class Serviceable : public boost::enable_shared_from_this< Serviceable >
 {
 public:
 	Serviceable();
-  //Serviceable(const Serviceable&);
 	virtual ~Serviceable();
 
   //Add a serviceable task in series (run when this completes)
@@ -58,5 +60,7 @@ private:
   
   Serviceable operator=(const Serviceable&);
 };
+
+}
 
 #endif

@@ -12,10 +12,9 @@ Email: oneil.john@gmail.com
   Rendezvous by first completion of tasks in parallel (A or B or C)
   
 */
-#include "Sequence.hpp"
-#include "Pause.hpp"
-#include "And.hpp"
-#include "Or.hpp"
+#include "Chain.hpp"
+
+using namespace Chain;
 
 int main(int argc, char* argv[])
 {

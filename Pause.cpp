@@ -22,6 +22,9 @@ using boost::make_shared;
 using std::cout;
 using std::endl;
 
+namespace Chain
+{
+
 Sequence Pause(const float time)
 {
   return Sequence(make_shared< PauseTask >(time));
@@ -50,4 +53,6 @@ void PauseTask::DoService(const float dt)
   {
     Done();
   }
+}
+
 }

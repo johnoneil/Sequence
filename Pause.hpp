@@ -15,6 +15,9 @@ DATE: Saturday, Oct 5th 2013
 #include "Serviceable.hpp"
 #include "Sequence.hpp"
 
+namespace Chain
+{
+
 Sequence Pause(const float time);
 Sequence Timeout(const float time);
 Sequence Wait(const float time);
@@ -32,5 +35,7 @@ private:
   PauseTask(const PauseTask&);
   PauseTask operator=(const PauseTask&);
 };
+
+}
 
 #endif

@@ -12,16 +12,24 @@ DATE: Sunday, Oct 28th, 2015
 */
 #include "Or.hpp"
 
+namespace Chain
+{
+
+Sequence Either(const Sequence& seq)
+{
+  return Sequence(make_shared< OrSequence >(seq));
+}
+
 OrSequence::OrSequence(const Sequence& seq)
 {
 	m_tasks.push_back(seq.m_sequence);
-};
+}
 
 ServiceablePtr OrSequence::Or(const ServiceablePtr& seq)
 {
 	m_tasks.push_back(seq);
 	return shared_from_this();
-};
+}
 
 OrSequence::OrSequence(const ServiceablePtr& seq)
 {
@@ -29,37 +37,33 @@ OrSequence::OrSequence(const ServiceablePtr& seq)
 }
 
 void OrSequence::DoService(const float dt)
+{
+  bool complete = false;
+  for(std::list< ServiceablePtr >::iterator itask=m_tasks.begin();
+      itask!=m_tasks.end(); ++itask)
   {
-    bool complete = false;
+    if(*itask)
+    {
+      (*itask) = (*itask)->Service(dt);
+      if(!(*itask))
+      {
+        complete=true;
+        break;
+      }
+    }
+  }
+  if(complete)
+  {
     for(std::list< ServiceablePtr >::iterator itask=m_tasks.begin();
-        itask!=m_tasks.end(); ++itask)
+      itask!=m_tasks.end(); ++itask)
     {
       if(*itask)
       {
-        (*itask) = (*itask)->Service(dt);
-        if(!(*itask))
-        {
-          complete=true;
-          break;
-        }
+        (*itask)->Cancel();
       }
     }
-    if(complete)
-    {
-      for(std::list< ServiceablePtr >::iterator itask=m_tasks.begin();
-        itask!=m_tasks.end(); ++itask)
-      {
-        if(*itask)
-        {
-          (*itask)->Cancel();
-        }
-      }
-      Done();
-    }
-  };
-;
+    Done();
+  }
+}
 
-Sequence Either(const Sequence& seq)
-{
-  return Sequence(make_shared< OrSequence >(seq));
-};
+}

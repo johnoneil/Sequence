@@ -13,9 +13,9 @@ DATE: Saturday, Oct 5th 2013
 #ifndef __SEQUENCE_HPP__
 #define __SEQUENCE_HPP__
 #include "Serviceable.hpp"
-//#include "And.hpp"
 
-class AndSequence;
+namespace Chain
+{
 
 class Sequence
 {
@@ -24,10 +24,10 @@ public:
   friend class OrSequence;
 
   Sequence(const ServiceablePtr& seq);
-	Sequence(const Sequence& other);
+  Sequence(const Sequence& other);
 
-	Sequence& Then(const ServiceablePtr& sequence);
-	Sequence& Then(const Sequence& sequence);
+  Sequence& Then(const ServiceablePtr& sequence);
+  Sequence& Then(const Sequence& sequence);
 
   virtual Sequence And(const ServiceablePtr& seq);
   virtual Sequence And(const Sequence& seq);
@@ -35,49 +35,18 @@ public:
   virtual Sequence Or(const ServiceablePtr& seq);
   virtual Sequence Or(const Sequence& seq);
 
-	Sequence operator=(const ServiceablePtr& seq);
-	Sequence operator=(const Sequence& other);
+  Sequence operator=(const ServiceablePtr& seq);
+  Sequence operator=(const Sequence& other);
 
-	bool Update(const float dt);
+  bool Update(const float dt);
   bool IsComplete(void)const;
 
 protected:
   virtual bool DoUpdate(const float dt);
-	ServiceablePtr m_sequence;
+  ServiceablePtr m_sequence;
 };
 
-/*
-class SequenceAndWrapper: public Serviceable, public Sequence
-{
-public:
-  SequenceAndWrapper(const Sequence& seq);
-  SequenceAndWrapper(const ServiceablePtr& seq);
+}
 
-  SequenceAndWrapper& And(const Sequence& seq);
-  SequenceAndWrapper& And(const ServiceablePtr& seq);
-};
-
-SequenceAndWrapper And(const Sequence& seq);
-
-class RendezvousSequence: public Sequence
-{
-public:
-  RendezvousSequence(const Sequence& seq);
-  RendezvousSequence(const ServiceablePtr& seq);
-
-  RendezvousSequence& And(const ServiceablePtr& seq);
-  RendezvousSequence& And(const Sequence& seq);
-};
-
-class OrSequence: public Sequence
-{
-public:
-  OrSequence(const Sequence& seq);
-  OrSequence(const ServiceablePtr& seq);
-
-  OrSequence& Or(const ServiceablePtr& seq);
-  OrSequence& Or(const Sequence& seq);
-};
-*/
 #endif
 
