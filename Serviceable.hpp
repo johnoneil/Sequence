@@ -57,7 +57,7 @@ private:
   bool m_complete;
 	ServiceablePtr m_series;
 private:
-  
+  Serviceable(const Serviceable&);
   Serviceable operator=(const Serviceable&);
 };
 

@@ -36,6 +36,11 @@ private:
 private:
   std::list< ServiceablePtr > m_tasks;
 
+private:
+  AndSequence();
+  AndSequence operator=(const AndSequence&);
+  AndSequence(const AndSequence&);
+
 };
 
 }

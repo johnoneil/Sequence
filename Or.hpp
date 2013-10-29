@@ -35,6 +35,11 @@ private:
 private:
   std::list< ServiceablePtr > m_tasks;
 
+private:
+  OrSequence();
+  OrSequence operator=(const OrSequence&);
+  OrSequence(const OrSequence&);
+
 };
 
 }
