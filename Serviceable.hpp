@@ -28,17 +28,17 @@ typedef shared_ptr< Serviceable > ServiceablePtr;
 class Serviceable : public boost::enable_shared_from_this< Serviceable >
 {
 public:
-	Serviceable();
-	virtual ~Serviceable();
+  Serviceable();
+  virtual ~Serviceable();
 
   //Add a serviceable task in series (run when this completes)
-	ServiceablePtr Then(const ServiceablePtr& sp);
+  ServiceablePtr Then(const ServiceablePtr& sp);
 
   //Basic service implementation. Returned pointer is the current "head" of
   //the chain of serviced tasks. Meant to be called in the form:
   //ServiceablePtr seq;
   //while( seq = seq.Service(dt))
-	ServiceablePtr Service(const float dt);
+  ServiceablePtr Service(const float dt);
 
   void Cancel(void);
 
@@ -46,16 +46,16 @@ protected:
   inline void Done(void){m_complete=true;};
 
 private:
-	//NVI implementation
+  //NVI implementation
   //These are the primary interfaces that task implementations
   //need define.
-	virtual void DoService(const float dt);
-	virtual void BeforeFirstUpdate(void);
-	virtual void AfterCompletion(void);
+  virtual void DoService(const float dt);
+  virtual void BeforeFirstUpdate(void);
+  virtual void AfterCompletion(void);
 
   bool m_updated;
   bool m_complete;
-	ServiceablePtr m_series;
+  ServiceablePtr m_series;
 private:
   Serviceable(const Serviceable&);
   Serviceable operator=(const Serviceable&);
